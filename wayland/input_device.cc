@@ -9,6 +9,7 @@
 #include "ozone/wayland/display.h"
 #include "ozone/wayland/input/keyboard.h"
 #include "ozone/wayland/input/pointer.h"
+#include "ozone/wayland/input/touchscreen.h"
 
 namespace ozonewayland {
 
@@ -56,13 +57,21 @@ void WaylandInputDevice::OnSeatCapabilities(void *data,
     device->input_pointer_ = NULL;
   }
 
-  if ((caps & WL_SEAT_CAPABILITY_))
+  if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !device->input_touch_) {
+      device->input_touch_ = new WaylandTouchscreen();
+  } else if (!(capt & WL_SEAT_CAPABILITY_TOUCH) && device->input_touch_) {
+      delete device->input_touch_;
+      device->input_touch_ = NULL;
+  }
 
   if (device->input_keyboard_)
     device->input_keyboard_->OnSeatCapabilities(seat, caps);
 
   if (device->input_pointer_)
     device->input_pointer_->OnSeatCapabilities(seat, caps);
+
+  if (device->input_touch_)
+      device->input_touch_->OnSeatCapabilities(seat, caps);
 }
 
 void WaylandInputDevice::SetFocusWindowHandle(unsigned windowhandle) {
