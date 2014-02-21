@@ -155,7 +155,7 @@ void OzoneDisplayChannelHost::UpdateConnection() {
                                        WaylandInput_KeyNotify::ID,
                                        WaylandInput_OutputSize::ID,
                                        WaylandInput_CloseWidget::ID,
-                                       WaylandWindow_Resized::ID
+                                       WaylandWindow_Resized::ID,
                                        WaylandInput_TouchNotify::ID};
   scoped_refptr<base::SingleThreadTaskRunner> compositor_thread_task_runner =
       base::MessageLoopProxy::current();
