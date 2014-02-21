@@ -31,6 +31,11 @@ class OzoneDisplayChannelHost : public content::BrowserChildProcessObserver {
                       ui::EventFlags flags,
                       float x,
                       float y);
+  void OnTouchNotify(ui::EventType type,
+                     float x,
+                     float y,
+                     int32_t touch_id,
+                     uint32_t time_stamp);
   void OnAxisNotify(float x, float y, int xoffset, int yoffset);
   void OnPointerEnter(unsigned handle, float x, float y);
   void OnPointerLeave(unsigned handle, float x, float y);
