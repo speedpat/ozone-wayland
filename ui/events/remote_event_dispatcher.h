@@ -41,6 +41,12 @@ class RemoteEventDispatcher : public EventConverterOzoneWayland {
                              unsigned height) OVERRIDE;
   virtual void CloseWidget(unsigned handle) OVERRIDE;
 
+  virtual void Touch(ui::EventType type,
+                     float x,
+                     float y,
+                     int32_t touch_id,
+                     uint32_t time_stamp) OVERRIDE;
+
  private:
   static void SendMotionNotify(float x, float y);
   static void SendButtonNotify(unsigned handle,

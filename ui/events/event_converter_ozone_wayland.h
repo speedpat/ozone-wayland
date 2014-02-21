@@ -52,6 +52,8 @@ class EventConverterOzoneWayland {
   // Sets the output change observer. Ownership is retained by the caller.
   virtual void SetOutputChangeObserver(OutputChangeObserver* observer);
 
+  virtual void Touch(ui::EventType type, float x, float y, int32_t touch_id, uint32_t time_stamp) = 0;
+
   protected:
   // Posts task to main loop of the thread on which Dispatcher was initialized.
   virtual void PostTaskOnMainLoop(const base::Closure& task);

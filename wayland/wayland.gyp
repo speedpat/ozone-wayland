@@ -76,6 +76,8 @@
         'input/keyboard.h',
         'input/pointer.cc',
         'input/pointer.h',
+        'input/touchscreen.cc',
+        'input/touchscreen.h',
       ],
     },
   ]
