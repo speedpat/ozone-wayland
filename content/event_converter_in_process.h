@@ -42,6 +42,13 @@ class EventConverterInProcess : public ui::EventConverterOzoneWayland {
   virtual void SetOutputChangeObserver(
       ui::OutputChangeObserver* observer) OVERRIDE;
 
+  virtual void Touch(ui::EventType type,
+                     float x,
+                     float y,
+                     int32_t
+                     touch_id,
+                     uint32_t time_stamp) OVERRIDE;
+
  private:
   static void NotifyPointerEnter(EventConverterInProcess* data,
                                  unsigned handle);

@@ -56,6 +56,8 @@ void WaylandInputDevice::OnSeatCapabilities(void *data,
     device->input_pointer_ = NULL;
   }
 
+  if ((caps & WL_SEAT_CAPABILITY_))
+
   if (device->input_keyboard_)
     device->input_keyboard_->OnSeatCapabilities(seat, caps);
 
