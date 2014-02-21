@@ -59,7 +59,7 @@ void WaylandInputDevice::OnSeatCapabilities(void *data,
 
   if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !device->input_touch_) {
       device->input_touch_ = new WaylandTouchscreen();
-  } else if (!(capt & WL_SEAT_CAPABILITY_TOUCH) && device->input_touch_) {
+  } else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && device->input_touch_) {
       delete device->input_touch_;
       device->input_touch_ = NULL;
   }
