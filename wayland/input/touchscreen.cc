@@ -39,8 +39,7 @@
 namespace ozonewayland {
 
 WaylandTouchscreen::WaylandTouchscreen()
-  : dispatcher_(NULL),
-    pointer_position_(0, 0) {
+  : dispatcher_(NULL) {
 }
 
 WaylandTouchscreen::~WaylandTouchscreen() {
@@ -93,16 +92,13 @@ void WaylandTouchscreen::OnTouchUp(void *data,
   WaylandDisplay::GetInstance()->SetSerial(serial);
   WaylandInputDevice* input = WaylandDisplay::GetInstance()->PrimaryInput();
 
-  float sx = wl_fixed_to_double(x);
-  float sy = wl_fixed_to_double(y);
-
-  device->dispatcher_->Touch(ui::ET_TOUCH_RELEASED, sx, sy, id, time);
+  device->dispatcher_->Touch(ui::ET_TOUCH_RELEASED, 0, 0, id, time);
 
   if (input->GetGrabWindowHandle() && input->GetGrabButton() == id)
       input->SetGrabWindowHandle(0, 0);
 }
 
-void WaylandTochscreen::OnTouchMotion(void *data,
+void WaylandTouchscreen::OnTouchMotion(void *data,
                                       struct wl_touch *wl_touch,
                                       uint32_t time,
                                       int32_t id,
@@ -118,7 +114,7 @@ void WaylandTochscreen::OnTouchMotion(void *data,
       return;
   }
 
-  device->dispatcher_->Touch(ui::ET_TOUCH_MODED, sx, sy, id, time);
+  device->dispatcher_->Touch(ui::ET_TOUCH_MOVED, sx, sy, id, time);
 }
 
 void WaylandTouchscreen::OnTouchFrame(void *data,
