@@ -20,7 +20,7 @@
       'type': 'static_library',
       'variables': {
         'WAYLAND_VERSION': '1.2.0',
-        'MESA_VERSION': '9.1.3',
+        'MESA_VERSION': '1.0.0',
         'wayland_packages': [
           'egl >= <(MESA_VERSION)',
           'wayland-client >= <(WAYLAND_VERSION)',
