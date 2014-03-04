@@ -39,7 +39,8 @@
 namespace ozonewayland {
 
 WaylandTouchscreen::WaylandTouchscreen()
-  : dispatcher_(NULL) {
+  : dispatcher_(NULL),
+    pointer_position_(0,0) {
 }
 
 WaylandTouchscreen::~WaylandTouchscreen() {
@@ -80,6 +81,8 @@ void WaylandTouchscreen::OnTouchDown(void *data,
   float sx = wl_fixed_to_double(x);
   float sy = wl_fixed_to_double(y);
 
+  device->pointer_position_.SetPoint(sx, sy);
+
   device->dispatcher_->Touch(ui::ET_TOUCH_PRESSED, sx, sy, id, time);
 }
 
@@ -92,7 +95,9 @@ void WaylandTouchscreen::OnTouchUp(void *data,
   WaylandDisplay::GetInstance()->SetSerial(serial);
   WaylandInputDevice* input = WaylandDisplay::GetInstance()->PrimaryInput();
 
-  device->dispatcher_->Touch(ui::ET_TOUCH_RELEASED, 0, 0, id, time);
+  device->dispatcher_->Touch(ui::ET_TOUCH_RELEASED,
+                             device->pointer_position_.x(),
+                             device->pointer_position_.y(), id, time);
 
   if (input->GetGrabWindowHandle() && input->GetGrabButton() == id)
       input->SetGrabWindowHandle(0, 0);
@@ -108,6 +113,8 @@ void WaylandTouchscreen::OnTouchMotion(void *data,
   WaylandInputDevice* input = WaylandDisplay::GetInstance()->PrimaryInput();
   float sx = wl_fixed_to_double(x);
   float sy = wl_fixed_to_double(y);
+
+  device->pointer_position_.SetPoint(sx, sy);
 
   if (input->GetGrabWindowHandle() &&
       input->GetGrabWindowHandle() != input->GetFocusWindowHandle()) {
@@ -128,7 +135,11 @@ void WaylandTouchscreen::OnTouchCancel(void *data,
   WaylandInputDevice* input = WaylandDisplay::GetInstance()->PrimaryInput();
 
 
-  device->dispatcher_->Touch(ui::ET_TOUCH_CANCELLED, 0, 0, 0, 0);
+  device->dispatcher_->Touch(ui::ET_TOUCH_CANCELLED,
+                             device->pointer_position_.x(),
+                             device->pointer_position_.y(),
+                             input->GetGrabButton(),
+                             0);
 
   if (input->GetGrabWindowHandle() && input->GetGrabButton() != 0)
        input->SetGrabWindowHandle(0, 0);
