@@ -118,21 +118,21 @@ void EventConverterInProcess::KeyNotify(ui::EventType type,
           keyev.PassAs<ui::Event>())));
 }
 
-void EventConverterInProcess::Touch(ui::EventType type,
-                                    float x,
-                                    float y,
-                                    int32_t touch_id,
-                                    uint32_t time_stamp) {
-    gfx::Point position(x, y);
-    base::TimeDelta time_delta = base::TimeDelta::FromMilliseconds(time_stamp);
-    scoped_ptr<ui::TouchEvent> touchev(new ui::TouchEvent(type,
-                                                          position,
-                                                          touch_id,
-                                                          time_delta));
+void EventConverterInProcess::TouchNotify(ui::EventType type,
+                                          float x,
+                                          float y,
+                                          int32_t touch_id,
+                                          uint32_t time_stamp) {
+  gfx::Point position(x, y);
+  base::TimeDelta time_delta = base::TimeDelta::FromMilliseconds(time_stamp);
+  scoped_ptr<ui::TouchEvent> touchev(new ui::TouchEvent(type,
+                                                        position,
+                                                        touch_id,
+                                                        time_delta));
     
-    PostTaskOnMainLoop(base::Bind(
-        &EventConverterInProcess::DispatchEventHelper, base::Passed(
-                touchev.PassAs<ui::Event>())));
+  ui::EventConverterOzoneWayland::PostTaskOnMainLoop(base::Bind(
+      &EventConverterInProcess::DispatchEventHelper, base::Passed(
+          touchev.PassAs<ui::Event>())));
 }
 
 void EventConverterInProcess::CloseWidget(unsigned handle) {

@@ -1,36 +1,12 @@
 // Copyright (c) 2014 Noser Engineering AG. All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-// * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-// * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-// * Neither the name of Intel Corporation nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #include "ozone/wayland/input/touchscreen.h"
 
 #include <linux/input.h>
 
-#include "ozone/ui/events/event_converter_ozone_wayland.h"
+#include "ozone/ui/events/event_factory_ozone_wayland.h"
 #include "ozone/wayland/input/cursor.h"
 #include "ozone/wayland/input_device.h"
 #include "ozone/wayland/window.h"
@@ -55,7 +31,7 @@ void WaylandTouchscreen::OnSeatCapabilities(wl_seat *seat, uint32_t caps) {
     WaylandTouchscreen::OnTouchCancel,
   };
 
-  dispatcher_ = EventConverterOzoneWayland::GetInstance();
+  dispatcher_ = ui::EventFactoryOzoneWayland::GetInstance()->EventConverter();
 
   if ((caps & WL_SEAT_CAPABILITY_TOUCH)) {
     wl_touch* input_touch = wl_seat_get_touch(seat);
@@ -76,14 +52,14 @@ void WaylandTouchscreen::OnTouchDown(void *data,
   WaylandDisplay::GetInstance()->SetSerial(serial);
   WaylandInputDevice* input = WaylandDisplay::GetInstance()->PrimaryInput();
   if (input->GetFocusWindowHandle() && input->GetGrabButton() == 0)
-      input->SetGrabWindowHandle(input->GetFocusWindowHandle(), id);
+    input->SetGrabWindowHandle(input->GetFocusWindowHandle(), id);
 
   float sx = wl_fixed_to_double(x);
   float sy = wl_fixed_to_double(y);
 
   device->pointer_position_.SetPoint(sx, sy);
 
-  device->dispatcher_->Touch(ui::ET_TOUCH_PRESSED, sx, sy, id, time);
+  device->dispatcher_->TouchNotify(ui::ET_TOUCH_PRESSED, sx, sy, id, time);
 }
 
 void WaylandTouchscreen::OnTouchUp(void *data,
@@ -95,12 +71,12 @@ void WaylandTouchscreen::OnTouchUp(void *data,
   WaylandDisplay::GetInstance()->SetSerial(serial);
   WaylandInputDevice* input = WaylandDisplay::GetInstance()->PrimaryInput();
 
-  device->dispatcher_->Touch(ui::ET_TOUCH_RELEASED,
+  device->dispatcher_->TouchNotify(ui::ET_TOUCH_RELEASED,
                              device->pointer_position_.x(),
                              device->pointer_position_.y(), id, time);
 
   if (input->GetGrabWindowHandle() && input->GetGrabButton() == id)
-      input->SetGrabWindowHandle(0, 0);
+    input->SetGrabWindowHandle(0, 0);
 }
 
 void WaylandTouchscreen::OnTouchMotion(void *data,
@@ -117,16 +93,16 @@ void WaylandTouchscreen::OnTouchMotion(void *data,
   device->pointer_position_.SetPoint(sx, sy);
 
   if (input->GetGrabWindowHandle() &&
-      input->GetGrabWindowHandle() != input->GetFocusWindowHandle()) {
-      return;
+    input->GetGrabWindowHandle() != input->GetFocusWindowHandle()) {
+    return;
   }
 
-  device->dispatcher_->Touch(ui::ET_TOUCH_MOVED, sx, sy, id, time);
+  device->dispatcher_->TouchNotify(ui::ET_TOUCH_MOVED, sx, sy, id, time);
 }
 
 void WaylandTouchscreen::OnTouchFrame(void *data,
                                       struct wl_touch *wl_touch) {
-  // todo what's this
+  // TODO(speedpat) find out what should be done here
 }
 
 void WaylandTouchscreen::OnTouchCancel(void *data,
@@ -134,15 +110,14 @@ void WaylandTouchscreen::OnTouchCancel(void *data,
   WaylandTouchscreen* device = static_cast<WaylandTouchscreen*>(data);
   WaylandInputDevice* input = WaylandDisplay::GetInstance()->PrimaryInput();
 
-
-  device->dispatcher_->Touch(ui::ET_TOUCH_CANCELLED,
+  device->dispatcher_->TouchNotify(ui::ET_TOUCH_CANCELLED,
                              device->pointer_position_.x(),
                              device->pointer_position_.y(),
                              input->GetGrabButton(),
                              0);
 
   if (input->GetGrabWindowHandle() && input->GetGrabButton() != 0)
-       input->SetGrabWindowHandle(0, 0);
+    input->SetGrabWindowHandle(0, 0);
 }
 
 }  // namespace ozonewayland

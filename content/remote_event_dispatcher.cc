@@ -74,6 +74,16 @@ void RemoteEventDispatcher::KeyNotify(ui::EventType state,
           modifiers));
 }
 
+void RemoteEventDispatcher::TouchNotify(ui::EventType type,
+                                        float x,
+                                        float y,
+                                        int32_t touch_id,
+                                        uint32_t time_stamp) {
+  ui::EventConverterOzoneWayland::PostTaskOnMainLoop(
+      base::Bind(&RemoteEventDispatcher::SendTouchNotify, type,
+          x, y, touch_id, time_stamp));
+}
+
 void RemoteEventDispatcher::OutputSizeChanged(unsigned width,
                                               unsigned height) {
   ui::EventConverterOzoneWayland::PostTaskOnMainLoop(base::Bind(
@@ -129,6 +139,14 @@ void RemoteEventDispatcher::SendKeyNotify(ui::EventType type,
   Send(new WaylandInput_KeyNotify(type, code, modifiers));
 }
 
+void RemoteEventDispatcher::SendTouchNotify(ui::EventType type,
+                                            float x,
+                                            float y,
+                                            int32_t touch_id,
+                                            uint32_t time_stamp) {
+  Send(new WaylandInput_TouchNotify(type, x, y, touch_id, time_stamp));
+}
+
 void RemoteEventDispatcher::SendOutputSizeChanged(unsigned width,
                                                   unsigned height) {
   Send(new WaylandInput_OutputSize(width, height));
@@ -147,27 +165,6 @@ void RemoteEventDispatcher::SendCloseWidget(unsigned handle) {
 void RemoteEventDispatcher::Send(IPC::Message* message) {
   ChildThread* thread = GetProcessMainThread();
   thread->Send(message);
-}
-
-void RemoteEventDispatcher::Touch(ui::EventType type,
-                                  float x,
-                                  float y,
-                                  int32_t touch_id,
-                                  uint32_t time_stamp) {
-    PostTaskOnMainLoop(base::Bind(&RemoteEventDispatcher::SendTouchNotify,
-                                  type,
-                                  x,
-                                  y,
-                                  touch_id,
-                                  time_stamp));
-}
-
-void RemoteEventDispatcher::SendTouchNotify(ui::EventType type,
-                   float x,
-                   float y,
-                   int32_t touch_id,
-                   uint32_t time_stamp) {
-    Send(new WaylandInput_TouchNotify(type, x, y, touch_id, time_stamp));
 }
 
 }  // namespace content
