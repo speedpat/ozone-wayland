@@ -62,10 +62,10 @@ void WaylandInputDevice::OnSeatCapabilities(void *data,
   }
 
   if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !device->input_touch_) {
-      device->input_touch_ = new WaylandTouchscreen();
+    device->input_touch_ = new WaylandTouchscreen();
   } else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && device->input_touch_) {
-      delete device->input_touch_;
-      device->input_touch_ = NULL;
+    delete device->input_touch_;
+    device->input_touch_ = NULL;
   }
 
   if (device->input_keyboard_)
@@ -75,7 +75,7 @@ void WaylandInputDevice::OnSeatCapabilities(void *data,
     device->input_pointer_->OnSeatCapabilities(seat, caps);
 
   if (device->input_touch_)
-      device->input_touch_->OnSeatCapabilities(seat, caps);
+    device->input_touch_->OnSeatCapabilities(seat, caps);
 }
 
 void WaylandInputDevice::SetFocusWindowHandle(unsigned windowhandle) {

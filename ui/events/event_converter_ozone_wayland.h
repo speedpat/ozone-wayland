@@ -36,6 +36,11 @@ class EVENTS_EXPORT EventConverterOzoneWayland {
   virtual void KeyNotify(ui::EventType type,
                          unsigned code,
                          unsigned modifiers) = 0;
+  virtual void TouchNotify(ui::EventType type,
+                           float x,
+                           float y,
+                           int32_t touch_id,
+                           uint32_t time_stamp) = 0;
 
   virtual void OutputSizeChanged(unsigned width, unsigned height) = 0;
   virtual void WindowResized(unsigned windowhandle,
@@ -46,8 +51,6 @@ class EVENTS_EXPORT EventConverterOzoneWayland {
   virtual void SetWindowChangeObserver(WindowChangeObserver* observer);
   // Sets the output change observer. Ownership is retained by the caller.
   virtual void SetOutputChangeObserver(OutputChangeObserver* observer);
-
-  virtual void Touch(ui::EventType type, float x, float y, int32_t touch_id, uint32_t time_stamp) = 0;
 
   protected:
   // Posts task to main loop of the thread on which Dispatcher was initialized.
