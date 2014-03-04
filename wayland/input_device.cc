@@ -20,7 +20,8 @@ WaylandInputDevice::WaylandInputDevice(WaylandDisplay* display,
       grab_button_(0),
       input_seat_(NULL),
       input_keyboard_(NULL),
-      input_pointer_(NULL) {
+      input_pointer_(NULL), 
+      input_touch_(NULL) {
   IMEStateChangeHandler::SetInstance(this);
   static const struct wl_seat_listener kInputSeatListener = {
     WaylandInputDevice::OnSeatCapabilities,
@@ -36,6 +37,9 @@ WaylandInputDevice::WaylandInputDevice(WaylandDisplay* display,
 WaylandInputDevice::~WaylandInputDevice() {
   delete input_keyboard_;
   delete input_pointer_;
+  if (input_touch_ != NULL) {
+    delete input_touch_;
+  }
   wl_seat_destroy(input_seat_);
 }
 

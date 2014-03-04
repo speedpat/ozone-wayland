@@ -165,7 +165,20 @@ void RemoteEventDispatcher::Touch(ui::EventType type,
                                   float y,
                                   int32_t touch_id,
                                   uint32_t time_stamp) {
-  Send(new WaylandInput_TouchNotify(type, x, y, touch_id, time_stamp));
+    PostTaskOnMainLoop(base::Bind(&RemoteEventDispatcher::SendTouchNotify,
+                                  type,
+                                  x,
+                                  y,
+                                  touch_id,
+                                  time_stamp));
+}
+
+void RemoteEventDispatcher::SendTouchNotify(ui::EventType type,
+                   float x,
+                   float y,
+                   int32_t touch_id,
+                   uint32_t time_stamp) {
+    Send(new WaylandInput_TouchNotify(type, x, y, touch_id, time_stamp));
 }
 
 }  // namespace ozonewayland

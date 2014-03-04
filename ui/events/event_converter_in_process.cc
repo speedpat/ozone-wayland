@@ -127,6 +127,7 @@ void EventConverterInProcess::Touch(ui::EventType type,
                                                           position,
                                                           touch_id,
                                                           time_delta));
+    
     PostTaskOnMainLoop(base::Bind(
         &EventConverterInProcess::DispatchEventHelper, base::Passed(
                 touchev.PassAs<ui::Event>())));

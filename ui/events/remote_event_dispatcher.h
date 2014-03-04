@@ -54,6 +54,11 @@ class RemoteEventDispatcher : public EventConverterOzoneWayland {
                                ui::EventFlags flags,
                                float x,
                                float y);
+  static void SendTouchNotify(ui::EventType type,
+                     float x,
+                     float y,
+                     int32_t touch_id,
+                     uint32_t time_stamp);
   static void SendAxisNotify(float x, float y, int xoffset, int yoffset);
   static void SendPointerEnter(unsigned handle, float x, float y);
   static void SendPointerLeave(unsigned handle, float x, float y);
